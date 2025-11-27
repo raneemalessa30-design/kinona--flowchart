@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kinonah – Call Flowchart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #8566AB;
+      --accent: #D5A24E;
+      --accent-soft: #E7C98F;
+      --bg: #F8F6FB;
+      --text-main: #171717;
+      --muted: #7B7B7B;
+      --card-bg: #ffffff;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --shadow-soft: 0 18px 40px rgba(0,0,0,0.10);
+      --shadow-light: 0 10px 24px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(133,102,171,0.18) 0, transparent 55%),
+        radial-gradient(circle at bottom left, rgba(213,162,78,0.2) 0, transparent 55%),
+        #f4f0fb;
+      color: var(--text-main);
+      direction: rtl;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .title-main {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0 4px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle-main {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0 0 22px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(213,162,78,0.18), rgba(248,246,251,1));
+      color: #7a5a9a;
+      border: 1px solid rgba(213,162,78,0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #ffffff 0, var(--accent) 70%);
+      box-shadow: 0 0 6px rgba(213,162,78,0.8);
+    }
+
+    .flow-wrapper {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .flow-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .flow-main {
+      background:
+        radial-gradient(circle at top right, rgba(133,102,171,0.12) 0, transparent 55%),
+        #fefefe;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(133,102,171,0.18);
+      padding: 20px 18px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-main::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -80px;
+      inset-block-start: -80px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(213,162,78,0.22), transparent 65%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .flow-title {
+      position: relative;
+      z-index: 1;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flow-title span {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .flow-legend {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .legend-item {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f8f6fb;
+      border: 1px solid rgba(133,102,171,0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-step { background: var(--primary); box-shadow: 0 0 6px rgba(133,102,171,0.7); }
+    .legend-decision { background: var(--accent); box-shadow: 0 0 6px rgba(213,162,78,0.85); }
+    .legend-outcome { background: #3a9152; box-shadow: 0 0 6px rgba(58,145,82,0.8); }
+
+    /* Flow items */
+    .flow-vertical {
+      position: relative;
+      z-index: 1;
+      padding-inline: 6px;
+      margin-top: 4px;
+    }
+
+    .flow-item {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .flow-line {
+      width: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .flow-line::before {
+      content: "";
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(133,102,171,0.7), transparent);
+      margin-top: 0;
+    }
+
+    .flow-node {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid rgba(133,102,171,0.25);
+      box-shadow: var(--shadow-light);
+      font-size: 13px;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .node-label {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .node-type-step .node-label { color: var(--primary); }
+    .node-type-decision .node-label { color: var(--accent); }
+    .node-type-outcome .node-label { color: #3a9152; }
+
+    .node-title {
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .node-desc {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .flow-start .flow-line::before {
+      background: linear-gradient(to bottom, rgba(213,162,78,1), rgba(133,102,171,0.8));
+    }
+
+    .node-badge {
+      position: absolute;
+      inset-inline-end: 10px;
+      inset-block-start: 8px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f8f2ff;
+      color: var(--primary);
+      border: 1px solid rgba(133,102,171,0.5);
+    }
+
+    .node-type-decision .node-badge {
+      background: #fff7e4;
+      color: #8a642e;
+      border-color: rgba(213,162,78,0.7);
+    }
+
+    .node-type-outcome .node-badge {
+      background: #eefaf0;
+      color: #256235;
+      border-color: rgba(104,178,120,0.6);
+    }
+
+    /* Branch container */
+    .branch-wrapper {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px dashed rgba(133,102,171,0.45);
+      background: #fcfbff;
+      padding: 10px 10px 12px;
+    }
+
+    .branch-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .branch-title span {
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .branch-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #ffffff 0, var(--accent) 70%);
+      box-shadow: 0 0 6px rgba(213,162,78,0.8);
+    }
+
+    .branch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .branch-card {
+      border-radius: 13px;
+      padding: 8px 9px;
+      background:
+        radial-gradient(circle at top right, rgba(133,102,171,0.14) 0, transparent 55%),
+        #ffffff;
+      border: 1px solid rgba(133,102,171,0.25);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .branch-card strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--primary);
+    }
+
+    /* Side panel */
+    .flow-side {
+      background:
+        radial-gradient(circle at top left, rgba(213,162,78,0.15) 0, transparent 55%),
+        #fefefe;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(133,102,171,0.18);
+      padding: 18px 16px 20px;
+    }
+
+    .side-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .side-text {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .side-list {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+      padding: 0 18px 0 0;
+    }
+
+    .side-list li {
+      margin-bottom: 5px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="tag-row">
+      <div class="tag-pill">
+        <span class="tag-dot"></span>
+        Flowchart – مسار المحادثة الجديدة
+      </div>
+      <div class="tag-pill">
+        <span class="tag-dot"></span>
+        كينونة – المساعد الذكي
+      </div>
+    </div>
+
+    <h1 class="title-main">Flowchart – مسار المحادثة في كينونة بعد التطوير</h1>
+    <p class="subtitle-main">
+      مخطط عالي المستوى يوضح خطوات المساعد الذكي من أول اتصال، إلى فهم النية، ثم التفرّع حسب نوع العميل والنتيجة النهائية.
+    </p>
+
+    <div class="flow-wrapper">
+      <!-- Main flow -->
+      <section class="flow-main">
+        <div class="flow-title">
+          المسار الرئيسي للمحادثة
+          <span>من الاتصال إلى المخرج النهائي</span>
+        </div>
+        <div class="flow-legend">
+          <div class="legend-item">
+            <span class="legend-dot legend-step"></span>
+            خطوة عادية (Step)
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot legend-decision"></span>
+            نقطة قرار / تفرّع (Decision)
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot legend-outcome"></span>
+            نتيجة نهائية (Outcome)
+          </div>
+        </div>
+
+        <div class="flow-vertical">
+          <!-- 1: Start -->
+          <div class="flow-item flow-start">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-step">
+              <div class="node-badge">Start</div>
+              <div class="node-label">STEP 1</div>
+              <div class="node-title">بداية الاتصال</div>
+              <div class="node-desc">
+                العميل يتصل على الرقم الموحد لمجموعة اللامع، ويبدأ النظام بالرد الآلي.
+              </div>
+            </div>
+          </div>
+
+          <!-- 2: Welcome Group -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-step">
+              <div class="node-label">STEP 2</div>
+              <div class="node-title">ترحيب وتعريف بالمجموعة</div>
+              <div class="node-desc">
+                رسالة ترحيب قصيرة: تعريف سريع بمسمى "مجموعة اللامع" مع ذكر الشركات، ومنها كينونة للتسويق.
+              </div>
+            </div>
+          </div>
+
+          <!-- 3: Company selection -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-decision">
+              <div class="node-badge">Routing</div>
+              <div class="node-label">DECISION 1</div>
+              <div class="node-title">تحديد الشركة المطلوبة</div>
+              <div class="node-desc">
+                النظام يطلب من العميل اختيار الجهة:
+                <br/>١) كينونة للتسويق
+                <br/>٢) فوري
+                <br/>٣) زجاج ممتاز
+                <br/>٤) اللامع للأثاث
+                <br/>أو يلتقط بالذكاء إذا العميل قال "أبي تسويق".
+              </div>
+            </div>
+          </div>
+
+          <!-- 4: Kinonah welcome -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-step">
+              <div class="node-label">STEP 3</div>
+              <div class="node-title">الوصول لكينونة والترحيب الخاص</div>
+              <div class="node-desc">
+                رسالة ترحيب مخصصة: "أهلًا وسهلًا في كينونة للتسويق 
+كيف نقدر نخدمك اليوم؟
+"
+              </div>
+            </div>
+          </div>
+
+          <!-- 5: Intent capture -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-decision">
+              <div class="node-badge">Intent</div>
+              <div class="node-label">DECISION 2</div>
+              <div class="node-title">التقاط نية العميل</div>
+              <div class="node-desc">
+                المساعد يسأل أو يلتقط من كلام العميل هل طلبه:
+                <br/>• تسعيرة / بدء مشروع جديد
+                <br/>• استفسار عام عن الخدمات
+                <br/>• متابعة مشروع أو عميل حالي
+              </div>
+
+              <!-- Branches -->
+              <div class="branch-wrapper">
+                <div class="branch-title">
+                  <span class="branch-icon"></span>
+                  تفرّعات النية
+                  <span>المسار يختلف حسب نوع العميل</span>
+                </div>
+                <div class="branch-grid">
+                  <div class="branch-card">
+                    <strong>فرع A – طلب تسعيرة / مشروع جديد</strong>
+                    • أسئلة موجهة عن نوع النشاط، أهداف التسويق، طريقة التواصل المفضلة.
+                    <br/>• إنشاء Lead مخصص وتحويله لفريق المبيعات أو الاستشارات.
+                  </div>
+                  <div class="branch-card">
+                    <strong>فرع B – استفسار عام</strong>
+                    • سؤال توضيحي واحد أو اثنين.
+                    <br/>• إجابة مختصرة + عرض تحويله لمسار تسعيرة إذا مناسب.
+                  </div>
+                  <div class="branch-card">
+                    <strong>فرع C – متابعة عميل حالي</strong>
+                    • طلب رقم جوال/رقم عقد/اسم المشروع.
+                    <br/>• ربطه بمدير مشروعه أو فريق الدعم مباشرة.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6: Guided questions -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-step">
+              <div class="node-label">STEP 4</div>
+              <div class="node-title">أسئلة موجّهة قصيرة</div>
+              <div class="node-desc">
+                المساعد يوضح: "بسألك 2–3 أسئلة بسيطة عشان نخدمك بشكل أفضل"،
+                ثم يجمع البيانات الضرورية بدون ما يرهق العميل.
+              </div>
+            </div>
+          </div>
+
+          <!-- 7: Data validation -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-step">
+              <div class="node-label">STEP 5</div>
+              <div class="node-title">تأكيد البيانات</div>
+              <div class="node-desc">
+                المساعد يعيد تلخيص البيانات الأساسية: "نشاطك كذا… تفضل التواصل عن طريق واتساب… هدفك كذا… هل هذا صحيح؟"
+              </div>
+            </div>
+          </div>
+
+          <!-- 8: Outcome -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-outcome">
+              <div class="node-badge">Outcome</div>
+              <div class="node-label">STEP 6</div>
+              <div class="node-title">تحديد المخرج النهائي</div>
+              <div class="node-desc">
+                حسب فرع النية:
+                <br/>• إرسال الطلب لفريق المبيعات مع كل البيانات.
+                <br/>• حجز استشارة أولية.
+                <br/>• تحويل فوري لمدير مشروع/دعم في حال عميل حالي.
+              </div>
+            </div>
+          </div>
+
+          <!-- 9: Summary -->
+          <div class="flow-item">
+            <div class="flow-line"></div>
+            <div class="flow-node node-type-outcome">
+              <div class="node-label">STEP 7</div>
+              <div class="node-title">تلخيص ونهاية الاتصال</div>
+              <div class="node-desc">
+                المساعد يختم بجملة توضح:
+                <br/>• ماذا سيحدث بعد المكالمة (متى وكيف يتواصلون معه؟)
+                <br/>• قناة المتابعة (رسالة واتساب، اتصال، إيميل).
+                <br/>• الوقت التقريبي: "خلال 24 ساعة عمل".
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Side explanation -->
+      <aside class="flow-side">
+        <p class="side-title">فلسفة تصميم الفلو</p>
+        <p class="side-text">
+          الفلو مبني على مبدأ بسيط: <strong>نقل الحمل الذهني من العميل إلى النظام.</strong>
+          يعني نخلي المساعد هو اللي يوضح الطريق، ويختصر للعميل، بدل ما نخلي العميل يشرح ويتخيل كل شيء لحاله.
+        </p>
+        <p class="side-title">أهم النقاط اللي يحققها هذا المسار:</p>
+        <ul class="side-list">
+          <li>تعريف واضح بالمجموعة ثم بكينونة من البداية.</li>
+          <li>تحديد نية العميل بسرعة بدون أسئلة مفتوحة مربكة.</li>
+          <li>أسئلة موجّهة وقصيرة بدل كلام طويل من جهة العميل.</li>
+          <li>ربط مباشر بين نوع النية ونوع النتيجة (Lead / استفسار / متابعة).</li>
+          <li>نهاية نظيفة توضح للعميل: "إيش صار؟ وإيش راح يصير بعدين؟".</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
